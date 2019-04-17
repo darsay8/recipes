@@ -6,7 +6,7 @@ type Recipe{
     category: String!
     description: String!
     instructions: String!
-    createDate: String
+    createdDate: String
     likes: Int
     username: String
 }
