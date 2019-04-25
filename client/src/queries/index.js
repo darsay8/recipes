@@ -23,7 +23,7 @@ export const GET_ALL_RECIPES = gql`
 
 export const SIGNIN_USER = gql`
 mutation ($username: String!, $password: String!){
-    siginUser(username: $username, password: $password){
+    signinUser(username: $username, password: $password){
       token
     }
 }
