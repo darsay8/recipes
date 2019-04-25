@@ -33,8 +33,15 @@ const app = express();
 const corsOption = {
     origin: "http://localhost:3000",
     credentials: true
-}
+};
 app.use(cors(corsOption));
+
+//Set up JWT authentication middleware
+app.use(async (req, res, next) => {
+    const token = req.headers['authorization'];
+    console.log(token);
+    next();
+});
 
 //Ctrate GraphiQL application
 app.use("/graphiql", graphiqlExpress({endpointURL: "/graphql"}));
