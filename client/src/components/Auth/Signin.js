@@ -1,86 +1,86 @@
 import React from "react";
-import {Mutation} from "react-apollo";
-import {SIGNIN_USER} from "../../queries";
+import { Mutation } from "react-apollo";
+import { SIGNIN_USER } from "../../queries";
 import Error from "../Error";
 
-
 const initState = {
-    username: "",
-    password: "",
+  username: "",
+  password: ""
 };
 
 class Signin extends React.Component {
-    state = {...initState};
+  state = { ...initState };
 
-    clearState = () => {
-        this.setState({...initState});
+  clearState = () => {
+    this.setState({ ...initState });
+  };
 
-    };
+  handleChange = e => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
 
-    handleChange = e => {
-        const {name, value} = e.target;
-        this.setState({[name]: value});
-    };
+  handleSubmit = (e, signinUser) => {
+    e.preventDefault();
+    signinUser().then(({ data }) => {
+      console.log(data);
+      localStorage.setItem("token", data.signinUser.token);
+      this.clearState();
+    });
+  };
 
-    handleSubmit = (e, signinUser) => {
-        e.preventDefault();
-        signinUser().then(({data}) => {
-            console.log(data);
-            localStorage.setItem('token', data.signinUser.token);
-            this.clearState();
-        });
+  validateForm = () => {
+    const { username, password } = this.state;
 
-    };
+    const isInvalid = !username || !password;
 
-    validateForm = () => {
-        const {username, password} = this.state;
+    return isInvalid;
+  };
 
-        const isInvalid = !username || !password;
+  render() {
+    const { username, password } = this.state;
+    return (
+      <div className="App">
+        <h1 className="App"> Signin </h1>
 
-        return isInvalid;
-    };
+        <Mutation mutation={SIGNIN_USER} variables={{ username, password }}>
+          {(signinUser, { data, loading, error }) => {
+            return (
+              <form
+                className="form"
+                onSubmit={e => this.handleSubmit(e, signinUser)}
+              >
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  value={username}
+                  onChange={this.handleChange}
+                />
 
-    render() {
-        const {username, password} = this.state;
-        return (
-            <div className="App">
-                <h1 className="App"> Signin </h1>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={this.handleChange}
+                />
 
-                <Mutation mutation={SIGNIN_USER} variables={{username, password}}>
-                    {(signinUser, {data, loading, error}) => {
-                        return (
-                            <form className="form" onSubmit={e => this.handleSubmit(e, signinUser)}>
-                                <input
-                                    type="text"
-                                    name="username"
-                                    placeholder="Username"
-                                    value={username}
-                                    onChange={this.handleChange}
-                                />
-
-                                <input
-                                    type="password"
-                                    name="password"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={this.handleChange}
-                                />
-
-                                <button type="submit"
-                                        disabled={loading || this.validateForm()}
-                                        className="button-primary">
-
-                                    Submit
-                                </button>
-                                {error && <Error error={error}/>}
-                            </form>
-                        )
-                    }}
-
-                </Mutation>
-            </div>
-        );
-    }
+                <button
+                  type="submit"
+                  disabled={loading || this.validateForm()}
+                  className="button-primary"
+                >
+                  Submit
+                </button>
+                {error && <Error error={error} />}
+              </form>
+            );
+          }}
+        </Mutation>
+      </div>
+    );
+  }
 }
 
 export default Signin;
